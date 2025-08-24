@@ -1,5 +1,7 @@
 package co.edu.uniquindio.empresa.model;
 
+import co.edu.uniquindio.empresa.services.*;
+
 public class VehiculoPasajero extends Vehiculo {
     private int numeroMaximoPasajeros;
 
@@ -23,5 +25,4 @@ public class VehiculoPasajero extends Vehiculo {
     public void encender() {
         System.out.println("No me encendio......ayuda");
     }
-
 }

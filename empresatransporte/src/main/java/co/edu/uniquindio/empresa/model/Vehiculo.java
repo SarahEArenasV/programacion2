@@ -1,6 +1,6 @@
 package co.edu.uniquindio.empresa.model;
 
-public class Vehiculo {
+public abstract class Vehiculo {
     private String placa;
     private String modelo;
     private String marca;
@@ -63,5 +63,4 @@ public class Vehiculo {
                 ", color='" + color + '\'' +
                 '}';
     }
-
 }

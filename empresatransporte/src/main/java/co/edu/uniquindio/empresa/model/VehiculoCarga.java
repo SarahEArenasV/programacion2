@@ -1,6 +1,6 @@
 package co.edu.uniquindio.empresa.model;
 
-public class VehiculoCarga extends Vehiculo {
+public class VehiculoCarga extends Vehiculo{
     private double capacidadCarga;
     private int numeroEjes;
 
@@ -34,6 +34,11 @@ public class VehiculoCarga extends Vehiculo {
         System.out.println("Endenciendo el vehiculo para cargarlo");
     }
 
-    
-
+    @Override
+    public String toString() {
+        return "VehiculoCarga{" +
+                "capacidadCarga=" + capacidadCarga +
+                ", numeroEjes=" + numeroEjes +
+                '}';
+    }
 }

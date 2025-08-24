@@ -3,6 +3,9 @@ package co.edu.uniquindio.empresa.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Propietario {
     private String nombre;
     private String numeroIdentificacion;
@@ -13,12 +16,10 @@ public class Propietario {
 
     private List<VehiculoCarga> listaVehiculosAsociados = new ArrayList<>();
 
-    EmpresaTransporte ownedByEmpresaTransporte;
-
     public Propietario() {
     }
 
-    public Propietario(String nombre, String numeroIdentificacion, String email, String numeroCelular, Vehiculo vehiculo,int edad) {
+    public Propietario(String nombre, String numeroIdentificacion, String email, String numeroCelular, Vehiculo vehiculo, int edad) {
         this.nombre = nombre;
         this.numeroIdentificacion = numeroIdentificacion;
         this.email = email;
@@ -42,17 +43,8 @@ public class Propietario {
     public void setNumeroIdentificacion(String numeroIdentificacion) {
         this.numeroIdentificacion = numeroIdentificacion;
     }
-    
 
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-        public String getEmail() {
+    public String getEmail() {
         return email;
     }
 
@@ -68,6 +60,15 @@ public class Propietario {
         this.numeroCelular = numeroCelular;
     }
 
+    
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+    
     public Vehiculo getVehiculo() {
         return vehiculo;
     }
@@ -86,12 +87,13 @@ public class Propietario {
 
     @Override
     public String toString() {
-        return "Propietario [nombre=" + nombre + ", numeroIdentificacion=" + numeroIdentificacion + ", email=" + email
-                + ", numeroCelular=" + numeroCelular + ", vehiculo=" + vehiculo + ", edad=" + edad
-                + ", listaVehiculosAsociados=" + listaVehiculosAsociados + ", ownedByEmpresaTransporte="
-                + ownedByEmpresaTransporte + "]";
+        return "Propietario{" +
+                "nombre='" + nombre + '\'' +
+                ", numeroIdentificacion='" + numeroIdentificacion + '\'' +
+                ", email='" + email + '\'' +
+                ", numeroCelular='" + numeroCelular + '\'' +
+                ", edad=" + edad +
+                '}';
     }
-
-
 
 }

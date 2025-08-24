@@ -1,152 +1,225 @@
 package co.edu.uniquindio.empresa.factory;
 
-
 import co.edu.uniquindio.empresa.model.EmpresaTransporte;
 import co.edu.uniquindio.empresa.model.Propietario;
+import co.edu.uniquindio.empresa.model.Vehiculo;
 import co.edu.uniquindio.empresa.model.VehiculoCarga;
 import co.edu.uniquindio.empresa.model.VehiculoPasajero;
+import co.edu.uniquindio.empresa.services.IModelFactoryServices;
 
-public class ModelFactory {
+import javax.swing.*;
+
+public class ModelFactory implements IModelFactoryServices {
+
     private static ModelFactory instance;
+    private EmpresaTransporte empresaTransporte;
+    private double pesoMaximoPermitido;
 
-    EmpresaTransporte empresaTransporte;
-
-    private ModelFactory() {
-    }
+    private ModelFactory() {}
 
     public static ModelFactory getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ModelFactory();
         }
         return instance;
     }
 
+    // Inicializar los datos
     public EmpresaTransporte inicializarDatos() {
         EmpresaTransporte empresa = new EmpresaTransporte();
-        empresa.setNombre("La carreta");
 
-        VehiculoCarga vehiculoCarga = new VehiculoCarga();
-        vehiculoCarga.setCapacidadCarga(200);
+        pesoMaximoPermitido = Double.parseDouble(JOptionPane.showInputDialog("Ingrese la capacidad máxima permitida para vehículos de carga:"));
 
-        VehiculoCarga vehiculoCarga2 = new VehiculoCarga();
-        vehiculoCarga2.setCapacidadCarga(500);
+        String nombreEmpresa = JOptionPane.showInputDialog("Ingrese el nombre de la empresa:");
+        empresa.setNombre(nombreEmpresa);
 
-        VehiculoPasajero vehiculoPasajero = new VehiculoPasajero();
-        vehiculoPasajero.setNumeroMaximoPasajeros(10);
-        vehiculoPasajero.setPlaca("PPP222");
+        int cantidadVehiculosCarga = Integer.parseInt(JOptionPane.showInputDialog("¿Cuántos vehículos de carga desea ingresar?"));
+        for (int i = 0; i < cantidadVehiculosCarga; i++) {
+            VehiculoCarga vehiculoCarga = new VehiculoCarga();
+            vehiculoCarga.setPlaca(JOptionPane.showInputDialog("Placa del vehículo de carga #" + (i + 1) + ":"));
+            vehiculoCarga.setMarca(JOptionPane.showInputDialog("Marca del vehículo de carga #" + (i + 1) + ":"));
+            vehiculoCarga.setModelo(JOptionPane.showInputDialog("Modelo del vehículo de carga #" + (i + 1) + ":"));
+            vehiculoCarga.setColor(JOptionPane.showInputDialog("Color del vehículo de carga #" + (i + 1) + ":"));
+            double capacidad = Double.parseDouble(JOptionPane.showInputDialog("Capacidad de carga (kg) del vehículo de carga #" + (i + 1) + ":"));
+            vehiculoCarga.setCapacidadCarga(capacidad);
+            vehiculoCarga.setNumeroEjes(Integer.parseInt(JOptionPane.showInputDialog("Número de ejes del vehículo de carga #" + (i + 1) + ":")));
+            empresa.getListaVehiculosCarga().add(vehiculoCarga);
+        }
 
+        int cantidadVehiculosPasajeros = Integer.parseInt(JOptionPane.showInputDialog("¿Cuántos vehículos de pasajeros desea ingresar?"));
+        for (int i = 0; i < cantidadVehiculosPasajeros; i++) {
+            VehiculoPasajero vehiculoPasajero = new VehiculoPasajero();
+            vehiculoPasajero.setPlaca(JOptionPane.showInputDialog("Placa del vehículo de pasajeros #" + (i + 1) + ":"));
+            vehiculoPasajero.setMarca(JOptionPane.showInputDialog("Marca del vehículo de pasajeros #" + (i + 1) + ":"));
+            vehiculoPasajero.setModelo(JOptionPane.showInputDialog("Modelo del vehículo de pasajeros #" + (i + 1) + ":"));
+            vehiculoPasajero.setColor(JOptionPane.showInputDialog("Color del vehículo de pasajeros #" + (i + 1) + ":"));
+            vehiculoPasajero.setNumeroMaximoPasajeros(Integer.parseInt(JOptionPane.showInputDialog("Número máximo de pasajeros del vehículo de pasajeros #" + (i + 1) + ":")));
+            empresa.getListaVehiculosPasajeros().add(vehiculoPasajero);
+        }
 
-        Propietario propietario = new Propietario();
-        propietario.setNombre("Pedro");
-        propietario.setVehiculo(vehiculoCarga);
-        propietario.setEdad(56);
-        propietario.getListaVehiculosAsociados().add(vehiculoCarga2);
+        int cantidadPropietarios = Integer.parseInt(JOptionPane.showInputDialog("¿Cuántos propietarios desea ingresar?"));
+        for (int i = 0; i < cantidadPropietarios; i++) {
+            Propietario propietario = new Propietario();
+            propietario.setNombre(JOptionPane.showInputDialog("Nombre del propietario #" + (i + 1) + ":"));
+            propietario.setNumeroIdentificacion(JOptionPane.showInputDialog("Número de identificación del propietario #" + (i + 1) + ":"));
+            propietario.setEmail(JOptionPane.showInputDialog("Email del propietario #" + (i + 1) + ":"));
+            propietario.setNumeroCelular(JOptionPane.showInputDialog("Número celular del propietario #" + (i + 1) + ":"));
+            propietario.setEdad(Integer.parseInt(JOptionPane.showInputDialog("Edad del propietario #" + (i + 1) + ":")));
 
-        empresa.getListaVehiculosCarga().add(vehiculoCarga);
-        empresa.getListaVehiculosPasajeros().add(vehiculoPasajero);
-        empresa.getListaPropietarios().add(propietario);
+            
+            String[] opciones = {"Ninguno", "Vehículo de carga", "Vehículo de pasajeros"};
+            int tipoVehiculo = JOptionPane.showOptionDialog(null, "¿Desea asociar un vehículo al propietario #" + (i + 1) + "?", "Asociar vehículo",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
+
+            if (tipoVehiculo == 1 && !empresa.getListaVehiculosCarga().isEmpty()) {
+                String placaVehiculo = JOptionPane.showInputDialog("Placa del vehículo de carga a asociar:");
+                VehiculoCarga vehiculoAsociado = null;
+                for (VehiculoCarga v : empresa.getListaVehiculosCarga()) {
+                    if (v.getPlaca().equalsIgnoreCase(placaVehiculo)) {
+                        vehiculoAsociado = v;
+                        break;
+                    }
+                }
+                propietario.setVehiculo(vehiculoAsociado);
+            } else if (tipoVehiculo == 2 && !empresa.getListaVehiculosPasajeros().isEmpty()) {
+                String placaVehiculo = JOptionPane.showInputDialog("Placa del vehículo de pasajeros a asociar:");
+                VehiculoPasajero vehiculoAsociado = null;
+                for (VehiculoPasajero v : empresa.getListaVehiculosPasajeros()) {
+                    if (v.getPlaca().equalsIgnoreCase(placaVehiculo)) {
+                        vehiculoAsociado = v;
+                        break;
+                    }
+                }
+                propietario.setVehiculo(vehiculoAsociado);
+            }
+            empresa.getListaPropietarios().add(propietario);
+        }
+
+        JOptionPane.showMessageDialog(null, "Datos cargados correctamente en la empresa " + empresa.getNombre());
+
         this.empresaTransporte = empresa;
-
-
-         //otro vehiculo pasajero para placa 
-        VehiculoPasajero vehiculoPasajero2 = new VehiculoPasajero();
-        vehiculoPasajero2.setNumeroMaximoPasajeros(15);
-        vehiculoPasajero2.setPlaca("PPP223");
-
-        empresa.getListaVehiculosPasajeros().add(vehiculoPasajero2);
 
         return empresa;
     }
 
+    // A) Recibiendo un valor de peso, obtener lista de propietarios cuyo vehículo de carga lo supera
+    public void mostrarPropietariosPorCapacidad(double capacidadMinima) {
+        StringBuilder sb = new StringBuilder("Propietarios con vehículos de carga que superan " + capacidadMinima + " kg:\n");
+        boolean encontrado = false;
+
+        for (Propietario propietario : empresaTransporte.getListaPropietarios()) {
+            Vehiculo vehiculo = propietario.getVehiculo();
+            if (vehiculo instanceof VehiculoCarga) {
+                VehiculoCarga carga = (VehiculoCarga) vehiculo;
+                if (carga.getCapacidadCarga() > capacidadMinima) {
+                    encontrado = true;
+                    sb.append("- ").append(propietario.getNombre())
+                      .append(" (Vehículo: ").append(carga.getPlaca())
+                      .append(", Capacidad: ").append(carga.getCapacidadCarga()).append(" kg)\n");
+                }
+            }
+        }
+
+        if (!encontrado) {
+            sb.append("No se encontraron propietarios con vehículos que superen la capacidad.");
+        }
+
+        JOptionPane.showMessageDialog(null, sb.toString());
+    }
+
+    // B) Recibiendo la placa de un vehículo de pasajeros, obtener el número de usuarios transportados
+    public void mostrarUsuariosPorPlaca(String placa) {
+        for (VehiculoPasajero v : empresaTransporte.getListaVehiculosPasajeros()) {
+            if (v.getPlaca().equalsIgnoreCase(placa)) {
+                JOptionPane.showMessageDialog(null,
+                    "Vehículo con placa " + placa + " transportó " + v.getNumeroMaximoPasajeros() + " pasajeros.");
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(null, "No se encontró un vehículo de pasajeros con la placa: " + placa);
+    }
+
+    // C) Obtener el número de propietarios mayores de 40 años
+    public void mostrarPropietariosMayores40() {
+        int contador = 0;
+        StringBuilder sb = new StringBuilder("Propietarios mayores de 40 años:\n");
+
+        for (Propietario p : empresaTransporte.getListaPropietarios()) {
+            if (p.getEdad() > 40) {
+                contador++;
+                sb.append("- ").append(p.getNombre())
+                  .append(" (").append(p.getEdad()).append(" años)\n");
+            }
+        }
+
+        sb.append("Total propietarios mayores de 40 años: ").append(contador);
+
+        JOptionPane.showMessageDialog(null, sb.toString());
+    }
+
+    // Métodos interface
     public EmpresaTransporte getEmpresaTransporte() {
         return empresaTransporte;
     }
 
-
-    public void crearPropietarioVehiculoCarga(String nombrePropietario, String placaVehiculo) {
-        if (empresaTransporte == null) {
-            System.out.println("Debe inicializar los datos primero.");
-            return;
-        }
-        VehiculoCarga vehiculo = new VehiculoCarga();
-        vehiculo.setPlaca(placaVehiculo);
-        vehiculo.setCapacidadCarga(100); 
-
-        Propietario propietario = new Propietario();
-        propietario.setNombre(nombrePropietario);
-        propietario.setVehiculo(vehiculo);
-
-        empresaTransporte.getListaPropietarios().add(propietario);
-        empresaTransporte.getListaVehiculosCarga().add(vehiculo);
-
-        System.out.println("Propietario y vehiculo de carga creados: " + nombrePropietario + " - " + placaVehiculo);
-    }
- //Ejercicio 3: Calcular el total de pasajeros transportados en un día.
-    public void calcularTotalPasajerosTransportados() {
-        int total = 0;
-        if (empresaTransporte != null) {
-            for (VehiculoPasajero v : empresaTransporte.getListaVehiculosPasajeros()) {
-                total += v.getNumeroMaximoPasajeros();
-            }
-        }
-        System.out.println("Total de pasajeros transportados: " + total);
-    }
-       // punto A propietarios con vehículos con limite de peso 
-        public void mostrarPropietariosPorPeso(double pesoMinimo) {
-        if (empresaTransporte == null) {
-            System.out.println("Debe inicializar los datos .");
-            return;
-        }
-        System.out.println("Propietarios con vehículos de carga mayores a " + pesoMinimo + "kg:");
-        boolean alguno = false;
-        for (Propietario p : empresaTransporte.getListaPropietarios()) {
-            if (p.getVehiculo() instanceof VehiculoCarga) {
-                VehiculoCarga v = (VehiculoCarga) p.getVehiculo();
-                if (v.getCapacidadCarga() > pesoMinimo) {
-                    System.out.println("- " + p.getNombre() + " (" + v.getCapacidadCarga() + "kg)");
-                    alguno = true;
-                }
-            }
-        }
-        if (!alguno) {
-            System.out.println("Ningún propietario supera ese peso.");
-        }
+    @Override
+    public String buscarVehiculoCargaPlaca(String placa) {
+        return empresaTransporte.buscarVehiculoCargaPlaca(placa);
     }
 
-    // punto B usuarios movilizados en un vehículo de pasajeros por placa
-    public void mostrarUsuariosPorPlaca(String placa) {
-        if (empresaTransporte == null) {
-            System.out.println("Debe inicializar los datos primero.");
-            return;
-        }
-        boolean encontrado = false;
-        for (VehiculoPasajero v : empresaTransporte.getListaVehiculosPasajeros()) {
-            if (v.getPlaca() != null && v.getPlaca().equalsIgnoreCase(placa)) {
-                System.out.println("Número de usuarios movilizados en el vehículo " + placa + ": " + v.getNumeroMaximoPasajeros());
-                encontrado = true;
-                break;
-            }
-        }
-        if (!encontrado) {
-            System.out.println("No se encontró un vehículo de pasajeros con la placa " + placa);
-        }
+    @Override
+    public String buscarPropietarioNombre(String nombre) {
+        return empresaTransporte.buscarPropietarioNombre(nombre);
     }
 
- // punto C numero de propietarios mayores de 40 años
-    public void mostrarCantidadPropietariosMayores40() {
-        if (empresaTransporte == null) {
-            System.out.println("Debe inicializar los datos primero.");
-            return;
-        }
-        int cantidad = 0;
-        for (Propietario p : empresaTransporte.getListaPropietarios()) {
-            if (p.getEdad() > 40) {
-                cantidad++;
-            }
-        }
-        System.out.println("Cantidad de propietarios mayores de 40 años: " + cantidad);
+    @Override
+    public boolean agregarPropietario(String nombre,
+                                 String numeroIdentificacion,
+                                 String email,
+                                 String numeroCelular,
+                                 Vehiculo vehiculo,
+                                 int edad) {
+        return empresaTransporte.agregarPropietario(nombre, numeroIdentificacion, email, numeroCelular, vehiculo, edad);
     }
 
+    @Override
+    public Propietario obtenerPropietario(String numeroIdentificacion) {
+        return empresaTransporte.obtenerPropietario(numeroIdentificacion);
+    }
 
+    @Override
+    public boolean eliminarPropietario(String numeroIdentificacion) {
+        return empresaTransporte.eliminarPropietario(numeroIdentificacion);
+    }
 
+    @Override
+    public boolean actualizarPropietario(String nombre,
+                                 String numeroIdentificacion,
+                                 String email,
+                                 String numeroCelular,
+                                 Vehiculo vehiculo,
+                                 int edad) {
+        return empresaTransporte.actualizarPropietario(nombre, numeroIdentificacion, email, numeroCelular, vehiculo, edad);
+    }
+
+    @Override
+    public boolean agregarVehiculo(String placa, String modelo, String marca, String color) {
+        return empresaTransporte.agregarVehiculo(placa, modelo, marca, color);
+    }
+
+    @Override
+    public Vehiculo obtenerVehiculo(String placa) {
+        return empresaTransporte.obtenerVehiculo(placa);
+    }
+
+    @Override
+    public boolean eliminarVehiculo(String placa) {
+        return empresaTransporte.eliminarVehiculo(placa);
+    }
+
+    @Override
+    public boolean actualizarVehiculo(String placa, String modelo, String marca, String color) {
+        return empresaTransporte.actualizarVehiculo(placa, modelo, marca, color);
+    }
 }
+
